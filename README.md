@@ -1,7 +1,8 @@
 # 📚 book
 
 Simple bookmark manager written in go
-![Showcase](https://raw.githubusercontent.com/m4rti21/book/main/assets/showcase.mp4)
+
+https://github.com/user-attachments/assets/150bcd63-2e35-4703-8e04-ea6dda61cbe9
 
 - [Instalation](#instalation)
   * [Manual](#manual)
