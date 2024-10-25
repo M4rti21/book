@@ -29,7 +29,6 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("At least 1 argument is required")
 	}
-
 	loadVariables()
 	loadConfig()
 	dir(os.Args[1])
