@@ -2,25 +2,65 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/pelletier/go-toml/v2"
 )
 
-var root = os.Getenv("XDG_CONFIG_HOME")
+var root string
+
+type Config struct {
+	FolderIcon string
+	Menu       string
+}
+
+var config = Config{
+	FolderIcon: "",
+	Menu:       "dmenu",
+}
 
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("At least 1 argument is required")
 	}
+
+	loadVariables()
+	loadConfig()
 	dir(os.Args[1])
 }
 
+func loadVariables() {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+
+	configDir := os.Getenv("XDG_CONFIG_HOME")
+	if configDir == "" {
+		root = strings.Replace("~/.config/book/", "~", homeDir, 1)
+	} else {
+		root = configDir + "/book/"
+	}
+
+}
+
+func loadConfig() {
+	file, err := os.ReadFile(root + "config.toml")
+	if err != nil {
+		return
+	}
+	err = toml.Unmarshal(file, &config)
+	if err != nil {
+		return
+	}
+}
+
 func dir(dirname string) {
-	location := root + "/book/" + dirname
+	location := root + dirname
 
 	var directories []string
 
@@ -37,8 +77,7 @@ func dir(dirname string) {
 	})
 
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
+		panic(err)
 	}
 
 	links, err := readLines(location + "/index")
@@ -55,8 +94,9 @@ func dir(dirname string) {
 		for _, d := range directories[1:] {
 			split := strings.Split(d, "/")
 			dirs = append(dirs, split[len(split)-1])
-			pipe += " " + split[len(split)-1] + "\n"
-			list = append(list, " "+split[len(split)-1]+"\n")
+			line := config.FolderIcon + " " + split[len(split)-1] + "\n"
+			pipe += line
+			list = append(list, line)
 		}
 	}
 
@@ -93,12 +133,17 @@ func dir(dirname string) {
 }
 
 func showPrompt(pipe string) string {
-	cmd := exec.Command("tofi", "-c", root+"/tofi/center.config")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		panic(err)
+	}
+	menuCommand := strings.Replace(config.Menu, "~", homeDir, 1)
+	menu := strings.Fields(menuCommand)
+	cmd := exec.Command(menu[0], menu[1:]...)
 	cmd.Stdin = strings.NewReader(pipe)
 	output, err := cmd.Output()
 	if err != nil {
-		fmt.Println("Error:", err)
-		return ""
+		panic(err)
 	}
 	return string(output)
 }
