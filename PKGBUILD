@@ -1,3 +1,4 @@
+# Maintainer: Martí Comas m4rti21@proton.me
 pkgname=book-bin
 pkgver=0.2
 pkgrel=1
