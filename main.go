@@ -51,11 +51,13 @@ func dir(dirname string) {
 
 	var pipe string
 
-	for _, d := range directories[1:] {
-		split := strings.Split(d, "/")
-		dirs = append(dirs, split[len(split)-1])
-		pipe += " " + split[len(split)-1] + "\n"
-		list = append(list, " "+split[len(split)-1]+"\n")
+	if len(directories) > 1 {
+		for _, d := range directories[1:] {
+			split := strings.Split(d, "/")
+			dirs = append(dirs, split[len(split)-1])
+			pipe += " " + split[len(split)-1] + "\n"
+			list = append(list, " "+split[len(split)-1]+"\n")
+		}
 	}
 
 	for _, l := range links {
