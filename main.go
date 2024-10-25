@@ -23,6 +23,8 @@ var config = Config{
 	Menu:       "dmenu",
 }
 
+var startLocation string
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("At least 1 argument is required")
@@ -45,6 +47,7 @@ func loadVariables() {
 	} else {
 		root = configDir + "/book/"
 	}
+	startLocation = root + os.Args[1]
 
 }
 
@@ -61,23 +64,19 @@ func loadConfig() {
 
 func dir(dirname string) {
 	location := root + dirname
-
 	var directories []string
 
-	// Walk through the directory
-	err := filepath.Walk(location, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		// Check if it's a directory
-		if info.IsDir() {
-			directories = append(directories, path) // Append to the slice
-		}
-		return nil
-	})
-
+	entries, err := os.ReadDir(location)
 	if err != nil {
 		panic(err)
+	}
+
+	// Loop through the entries
+	for _, entry := range entries {
+		// Check if it's a directory
+		if entry.IsDir() {
+			directories = append(directories, location+"/"+entry.Name()) // Append full path
+		}
 	}
 
 	links, err := readLines(location + "/index")
@@ -87,11 +86,14 @@ func dir(dirname string) {
 
 	var list []string
 	var dirs []string
-
 	var pipe string
 
-	if len(directories) > 1 {
-		for _, d := range directories[1:] {
+	if filepath.Clean(location) != startLocation {
+		directories = append([]string{".."}, directories...)
+	}
+
+	if len(directories) > 0 {
+		for _, d := range directories {
 			split := strings.Split(d, "/")
 			dirs = append(dirs, split[len(split)-1])
 			line := config.FolderIcon + " " + split[len(split)-1] + "\n"
