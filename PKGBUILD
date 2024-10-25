@@ -1,4 +1,4 @@
-pkgname=book
+pkgname=book-bin
 pkgver=0.2
 pkgrel=1
 pkgdesc="Simple bookmark manager written in go"
