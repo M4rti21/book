@@ -21,15 +21,15 @@ An example structure could be like this:
 ```
 ~/.config/book/
 --------------------
-├──  config.toml
-├──  Personal
-│  ├──  Shopping
-│  │  └──  index
-│  ├──  index
-│  └──  Entertainment
-│     └──  index
-└──  Work
-      └──  index
+├── config.toml
+├── Personal
+│  ├── Shopping
+│  │  └── index
+│  ├── index
+│  └── Entertainment
+│     └── index
+└── Work
+      └── index
 ```
 
 The contents of the index file can be in one of two ways:
