@@ -4,6 +4,7 @@ Simple bookmark manager written in go
 
 https://github.com/user-attachments/assets/150bcd63-2e35-4703-8e04-ea6dda61cbe9
 
+## Index
 - [Instalation](#instalation)
   * [Manual](#manual)
 - [Configuration](#configuration)
