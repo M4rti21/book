@@ -1,4 +1,4 @@
-# 📚 book
+# 📚 buk
 
 Simple bookmark manager written in go
 
@@ -17,20 +17,20 @@ https://github.com/user-attachments/assets/150bcd63-2e35-4703-8e04-ea6dda61cbe9
 
 ## Instalation
 ### Manual
-Grab the binary from the [latest release](https://github.com/M4rti21/book/releases/latest) 
+Grab the binary from the [latest release](https://github.com/M4rti21/buk/releases/latest) 
 and put it somewhere detected by your `$PATH`
 
 ### Build
 You can also build the project yourself:
 ```sh
-git clone https://github.com/m4rti21/book.git
-cd book
+git clone https://github.com/m4rti21/buk.git
+cd buk
 go build
 ```
 
 ## Configuration
-The config directory its gonna be at `$XDG_CONFIG_HOME/book`, if the variable
-is not set then it'll search at `~/.config/book`.
+The config directory its gonna be at `$XDG_CONFIG_HOME/buk`, if the variable
+is not set then it'll search at `~/.config/buk`.
 
 ### Bookmarks
 Inside the config directory create a folder for your bookmarks, for example 
@@ -41,7 +41,7 @@ you want as bookmarks, you can create subdirectories at any level and put an
 An example structure could be like this:
 
 ```
-~/.config/book/
+~/.config/buk/
 --------------------
 ├── config.toml
 ├── Personal
@@ -88,5 +88,5 @@ menu = "dmenu"
 | menu       | string |command for displaying the options (has to accept stdin for the entires)|
 
 ## Usage
-Once configured its as simple as running `book <dirname>` where `<dirname>` is
-one of the folders inside the config directory, for example `book Personal`.
+Once configured its as simple as running `buk <dirname>` where `<dirname>` is
+one of the folders inside the config directory, for example `buk Personal`.
