@@ -15,12 +15,11 @@ sha256sums=('SKIP')
 options=('!debug')
 
 build() {
-    cd "$pkgname-$pkgver"
-    go build
+    cd "$pkgname-$pkgver/src"
+    go build -o ..
 }
 
 package() {
     cd "$pkgname-$pkgver"
     install -Dm755 "./$pkgname" "$pkgdir/usr/bin/$pkgname"
-    install -Dm644 ./README.md "$pkgdir/usr/share/doc/$pkgname"
 }
