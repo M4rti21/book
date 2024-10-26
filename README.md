@@ -1,4 +1,4 @@
-# 📚 book
+# 📚 buk
 
 Simple bookmark manager written in go
 
