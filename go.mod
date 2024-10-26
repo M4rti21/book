@@ -1,4 +1,4 @@
-module m4rti.dev/book
+module m4rti.dev/buk
 
 go 1.23.2
 

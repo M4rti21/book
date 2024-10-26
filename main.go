@@ -42,9 +42,9 @@ func loadVariables() {
 
 	configDir := os.Getenv("XDG_CONFIG_HOME")
 	if configDir == "" {
-		root = strings.Replace("~/.config/book/", "~", homeDir, 1)
+		root = strings.Replace("~/.config/buk/", "~", homeDir, 1)
 	} else {
-		root = configDir + "/book/"
+		root = configDir + "/buk/"
 	}
 	startLocation = root + os.Args[1]
 
