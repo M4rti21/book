@@ -7,6 +7,7 @@ https://github.com/user-attachments/assets/150bcd63-2e35-4703-8e04-ea6dda61cbe9
 ## Index
 - [Instalation](#instalation)
   * [Manual](#manual)
+  * [Build](#build)
 - [Configuration](#configuration)
   * [Bookmarks](#bookmarks)
     + [Without description](#without-description)
@@ -18,6 +19,14 @@ https://github.com/user-attachments/assets/150bcd63-2e35-4703-8e04-ea6dda61cbe9
 ### Manual
 Grab the binary from the [latest release](https://github.com/M4rti21/book/releases/latest) 
 and put it somewhere detected by your `$PATH`
+
+### Build
+You can also build the project yourself:
+```sh
+git clone https://github.com/m4rti21/book.git
+cd book
+go build
+```
 
 ## Configuration
 The config directory its gonna be at `$XDG_CONFIG_HOME/book`, if the variable
