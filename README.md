@@ -24,8 +24,9 @@ and put it somewhere detected by your `$PATH`
 You can also build the project yourself:
 ```sh
 git clone https://github.com/m4rti21/book.git
-cd book
-go build
+cd book/src
+go build -o ..
+cd ..
 ```
 
 ## Configuration
