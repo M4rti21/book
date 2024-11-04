@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -12,53 +14,102 @@ import (
 )
 
 var root string
+var startLocation string
 
 type Config struct {
 	FolderIcon string
 	Menu       string
+	Run        string
 }
 
 var config = Config{
 	FolderIcon: "",
 	Menu:       "dmenu",
+	Run:        "xdg-open",
 }
 
-var startLocation string
+type Arguments struct {
+	Bookmarks  string
+	Config     string
+	Directory  string
+	FolderIcon string
+	Menu       string
+	Run        string
+}
+
+var arguments = Arguments{}
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("At least 1 argument is required")
-	}
-
-	loadVariables()
+	loadArguments()
+	fmt.Println("Arguments:", arguments)
 	loadConfig()
-	dir(os.Args[1])
+	fmt.Println("Config:", config)
+	dir(arguments.Bookmarks)
 }
 
-func loadVariables() {
+func loadArguments() {
+
+	flag.StringVar(&arguments.Config, "c", "", "Specify config file")
+	flag.StringVar(&arguments.Directory, "d", "", "Specify bookmark directory")
+	flag.StringVar(&arguments.FolderIcon, "f", "", "Specify folder icon")
+	flag.StringVar(&arguments.Menu, "m", "", "Specify menu command")
+	flag.StringVar(&arguments.Run, "r", "", "Specify run command")
+
+	flag.Parse()
+
+	if len(flag.Args()) == 0 {
+		fmt.Println("Error: Missing required positional argument.")
+		os.Exit(1)
+	}
+
+	arguments.Bookmarks = flag.Args()[0]
+}
+
+func loadConfig() {
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
 	}
 
-	configDir := os.Getenv("XDG_CONFIG_HOME")
-	if configDir == "" {
-		root = strings.Replace("~/.config/book/", "~", homeDir, 1)
+	if arguments.Directory != "" {
+		root = strings.Replace(arguments.Directory, "~", homeDir, 1)
 	} else {
-		root = configDir + "/book/"
+		configDir := os.Getenv("XDG_CONFIG_HOME")
+		if configDir == "" {
+			root = strings.Replace("~/.config/book/", "~", homeDir, 1)
+		} else {
+			root = configDir + "/book/"
+		}
+		startLocation = root + arguments.Bookmarks
 	}
-	startLocation = root + os.Args[1]
 
-}
+	var configFile string
 
-func loadConfig() {
-	file, err := os.ReadFile(root + "config.toml")
+	if arguments.Config != "" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			panic(err)
+		}
+		configFile = strings.Replace(arguments.Config, "~", homeDir, 1)
+	} else {
+		configFile = root + "config.toml"
+	}
+
+	file, err := os.ReadFile(configFile)
 	if err != nil {
-		return
 	}
 	err = toml.Unmarshal(file, &config)
 	if err != nil {
-		return
+	}
+	if arguments.Run != "" {
+		config.Run = arguments.Run
+	}
+	if arguments.FolderIcon != "" {
+		config.FolderIcon = arguments.FolderIcon
+	}
+	if arguments.Menu != "" {
+		config.Menu = arguments.Menu
 	}
 }
 
@@ -117,19 +168,18 @@ func dir(dirname string) {
 	} else if index-len(dirs) < len(links) {
 		selected := links[index-len(dirs)]
 		link_split := strings.Split(selected, "#")
+		run := strings.Fields(config.Run)
 		if len(link_split) == 1 {
-			cmd := exec.Command("xdg-open", selected)
-			err := cmd.Start()
-			if err != nil {
-				return
-			}
-			return
+			run = append(run, selected)
+		} else {
+			run = append(run, strings.Trim(link_split[1], " "))
 		}
-		cmd := exec.Command("xdg-open", strings.Trim(link_split[1], " "))
+		cmd := exec.Command(run[0], run[1:]...)
 		err := cmd.Start()
 		if err != nil {
 			return
 		}
+		return
 	}
 
 }
