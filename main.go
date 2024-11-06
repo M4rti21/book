@@ -2,228 +2,156 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
-	"log"
 	"os"
-	"os/exec"
-	"path/filepath"
 	"strings"
 
-	"github.com/pelletier/go-toml/v2"
+	"github.com/k0kubun/pp"
 )
-
-var root string
-var startLocation string
 
 type Config struct {
 	FolderIcon string
 	Menu       string
 	Run        string
+	ShowUrl    bool
+}
+
+type Bookmark struct {
+	Name string
+	URL  string
+}
+
+type Folder struct {
+	index   []Bookmark
+	folders map[string][]Folder
+}
+
+type Data struct {
+	Config    Config
+	Bookmarks Folder
 }
 
 var config = Config{
 	FolderIcon: "",
 	Menu:       "dmenu",
 	Run:        "xdg-open",
+	ShowUrl:    false,
 }
 
-type Arguments struct {
-	Bookmarks  string
-	Config     string
-	Directory  string
-	FolderIcon string
-	Menu       string
-	Run        string
-}
+var urls = Folder{}
 
-var arguments = Arguments{}
+const FOLDER_DELIMITER = "*"
+const BOOKMARK_DELIMITER = "\""
 
 func main() {
-	loadArguments()
-	fmt.Println("Arguments:", arguments)
-	loadConfig()
-	fmt.Println("Config:", config)
-	dir(arguments.Bookmarks)
-}
-
-func loadArguments() {
-
-	flag.StringVar(&arguments.Config, "c", "", "Specify config file")
-	flag.StringVar(&arguments.Directory, "d", "", "Specify bookmark directory")
-	flag.StringVar(&arguments.FolderIcon, "f", "", "Specify folder icon")
-	flag.StringVar(&arguments.Menu, "m", "", "Specify menu command")
-	flag.StringVar(&arguments.Run, "r", "", "Specify run command")
-
-	flag.Parse()
-
-	if len(flag.Args()) == 0 {
-		fmt.Println("Error: Missing required positional argument.")
-		os.Exit(1)
-	}
-
-	arguments.Bookmarks = flag.Args()[0]
-}
-
-func loadConfig() {
-
-	homeDir, err := os.UserHomeDir()
+	file, err := os.Open("test.conf")
 	if err != nil {
-		panic(err)
-	}
-
-	if arguments.Directory != "" {
-		root = strings.Replace(arguments.Directory, "~", homeDir, 1)
-	} else {
-		configDir := os.Getenv("XDG_CONFIG_HOME")
-		if configDir == "" {
-			root = strings.Replace("~/.config/book/", "~", homeDir, 1)
-		} else {
-			root = configDir + "/book/"
-		}
-		startLocation = root + arguments.Bookmarks
-	}
-
-	var configFile string
-
-	if arguments.Config != "" {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			panic(err)
-		}
-		configFile = strings.Replace(arguments.Config, "~", homeDir, 1)
-	} else {
-		configFile = root + "config.toml"
-	}
-
-	file, err := os.ReadFile(configFile)
-	if err != nil {
-	}
-	err = toml.Unmarshal(file, &config)
-	if err != nil {
-	}
-	if arguments.Run != "" {
-		config.Run = arguments.Run
-	}
-	if arguments.FolderIcon != "" {
-		config.FolderIcon = arguments.FolderIcon
-	}
-	if arguments.Menu != "" {
-		config.Menu = arguments.Menu
-	}
-}
-
-func dir(dirname string) {
-	location := root + dirname
-	var directories []string
-
-	entries, err := os.ReadDir(location)
-	if err != nil {
-		panic(err)
-	}
-
-	// Loop through the entries
-	for _, entry := range entries {
-		// Check if it's a directory
-		if entry.IsDir() {
-			directories = append(directories, location+"/"+entry.Name()) // Append full path
-		}
-	}
-
-	links, err := readLines(location + "/index")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var list []string
-	var dirs []string
-	var pipe string
-
-	if filepath.Clean(location) != startLocation {
-		directories = append([]string{".."}, directories...)
-	}
-
-	if len(directories) > 0 {
-		for _, d := range directories {
-			split := strings.Split(d, "/")
-			dirs = append(dirs, split[len(split)-1])
-			line := config.FolderIcon + " " + split[len(split)-1] + "\n"
-			pipe += line
-			list = append(list, line)
-		}
-	}
-
-	for _, l := range links {
-		pipe += l + "\n"
-		list = append(list, l+"\n")
-	}
-
-	out := showPrompt(pipe)
-	index := indexOf(list, out)
-
-	if index == -1 {
-		return
-	} else if index < len(dirs) {
-		dir(dirname + "/" + dirs[index])
-	} else if index-len(dirs) < len(links) {
-		selected := links[index-len(dirs)]
-		link_split := strings.Split(selected, "#")
-		run := strings.Fields(config.Run)
-		if len(link_split) == 1 {
-			run = append(run, selected)
-		} else {
-			run = append(run, strings.Trim(link_split[1], " "))
-		}
-		cmd := exec.Command(run[0], run[1:]...)
-		err := cmd.Start()
-		if err != nil {
-			return
-		}
+		fmt.Println("Error opening file:", err)
 		return
 	}
-
-}
-
-func showPrompt(pipe string) string {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
-	}
-	menuCommand := strings.Replace(config.Menu, "~", homeDir, 1)
-	menu := strings.Fields(menuCommand)
-	cmd := exec.Command(menu[0], menu[1:]...)
-	cmd.Stdin = strings.NewReader(pipe)
-	output, err := cmd.Output()
-	if err != nil {
-		panic(err)
-	}
-	return string(output)
-}
-
-func readLines(path string) ([]string, error) {
-	file, err := os.Open(path)
-
-	if err != nil {
-		return nil, err
-	}
-
 	defer file.Close()
 
-	var lines []string
 	scanner := bufio.NewScanner(file)
-
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		line := cleanLine(scanner.Text())
+		if strings.Contains(line, "[config]") {
+			parseConfig(*scanner)
+		} else if strings.Contains(line, "[bookmarks]") {
+			parseBookmarks(*scanner)
+		}
+		// fmt.Println(line)
 	}
 
-	return lines, scanner.Err()
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading file:", err)
+	}
+
+	fmt.Println(config)
 }
 
-func indexOf(arr []string, val string) int {
-	for pos, v := range arr {
-		if v == val {
-			return pos
+func cleanLine(line string) string {
+	return strings.Trim(strings.Split(line, "#")[0], " ")
+}
+
+func indentLevel(s string) int {
+	count := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] == ' ' {
+			count++
+		} else {
+			break
 		}
 	}
-	return -1
+	return count
+}
+
+func parseConfig(scanner bufio.Scanner) {
+	prev_indent := 0
+	for scanner.Scan() {
+		raw_line := scanner.Text()
+		indent := indentLevel(raw_line)
+		line := cleanLine(raw_line)
+		if indent < prev_indent {
+			return
+		}
+		if line == "" {
+			return
+		}
+		split := strings.Split(line, "=")
+		if len(split) > 1 {
+			parseVariable(split[0], split[1])
+		}
+	}
+}
+
+func parseVariable(key string, val string) {
+	key = strings.Trim(key, " ")
+	val = strings.Trim(val, " ")
+	switch key {
+	case "folderIcon":
+		config.FolderIcon = strings.Trim(val, "\"")
+		break
+	case "menu":
+		config.Menu = strings.Trim(val, "\"")
+		break
+	case "run":
+		config.Run = strings.Trim(val, "\"")
+		break
+	case "showUrl":
+		config.ShowUrl = val == "true"
+		break
+	}
+}
+
+func parseBookmarks(scanner bufio.Scanner) {
+	// prev_indent := 0
+	// prev_folder := urls
+	current_folder := urls
+	current_folder.folders = make(map[string][]Folder)
+	for scanner.Scan() {
+		raw_line := scanner.Text()
+		// indent := indentLevel(raw_line)
+		line := cleanLine(raw_line)
+		if strings.HasPrefix(line, FOLDER_DELIMITER) {
+			folder_name := strings.Trim(strings.Split(line, FOLDER_DELIMITER)[2], " ")
+			current_folder.folders[folder_name] = []Folder{}
+		} else if strings.HasPrefix(line, BOOKMARK_DELIMITER) {
+			split := strings.Split(line, BOOKMARK_DELIMITER)
+			switch len(split) {
+			case 3:
+				current_folder.index = append(current_folder.index, Bookmark{
+					Name: "",
+					URL:  split[1],
+				})
+				break
+			case 5:
+				current_folder.index = append(current_folder.index, Bookmark{
+					Name: split[1],
+					URL:  split[3],
+				})
+				break
+			}
+		}
+	}
+	pp.Print(current_folder)
 }
