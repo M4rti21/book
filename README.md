@@ -46,6 +46,7 @@ An example structure could be like this:
 --------------------
 ├── config.toml
 ├── Personal
+|  index
 │  ├── Shopping
 │  │  └── index
 │  ├── index
