@@ -23,7 +23,7 @@ type Bookmark struct {
 
 type Folder struct {
 	index   []Bookmark
-	folders map[string][]Folder
+	folders map[string]*Folder
 }
 
 type Data struct {
@@ -37,6 +37,8 @@ var config = Config{
 	Run:        "xdg-open",
 	ShowUrl:    false,
 }
+
+var folders = []Folder{}
 
 var urls = Folder{}
 
@@ -66,7 +68,7 @@ func main() {
 		fmt.Println("Error reading file:", err)
 	}
 
-	fmt.Println(config)
+	// fmt.Println(config)
 }
 
 func cleanLine(line string) string {
@@ -126,15 +128,16 @@ func parseVariable(key string, val string) {
 func parseBookmarks(scanner bufio.Scanner) {
 	// prev_indent := 0
 	// prev_folder := urls
-	current_folder := urls
-	current_folder.folders = make(map[string][]Folder)
+	current_folder := &urls
+	current_folder.folders = make(map[string]*Folder)
 	for scanner.Scan() {
 		raw_line := scanner.Text()
 		// indent := indentLevel(raw_line)
 		line := cleanLine(raw_line)
 		if strings.HasPrefix(line, FOLDER_DELIMITER) {
-			folder_name := strings.Trim(strings.Split(line, FOLDER_DELIMITER)[2], " ")
-			current_folder.folders[folder_name] = []Folder{}
+			split := strings.Split(line, FOLDER_DELIMITER)
+			folder_name := strings.Trim(split[1], " ")
+			current_folder := &createFolder()
 		} else if strings.HasPrefix(line, BOOKMARK_DELIMITER) {
 			split := strings.Split(line, BOOKMARK_DELIMITER)
 			switch len(split) {
@@ -153,5 +156,13 @@ func parseBookmarks(scanner bufio.Scanner) {
 			}
 		}
 	}
-	pp.Print(current_folder)
+	pp.Print(folders)
+	// pp.Print(current_folder)
+}
+
+func createFolder() Folder {
+	index := len(folders)
+	folders = append(folders, Folder{})
+	folders[index].folders = make(map[string]*Folder)
+	return folders[index]
 }
