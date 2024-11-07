@@ -24,12 +24,13 @@ and put it somewhere detected by your `$PATH`
 You can also build the project yourself:
 ```sh
 git clone https://github.com/m4rti21/book.git
-cd book/src
+cd book
 go build -o ..
 cd ..
 ```
 
 ## Configuration
+# IGNORE THIS, THE CONFIG HAS CHANGED
 The config directory its gonna be at `$XDG_CONFIG_HOME/book`, if the variable
 is not set then it'll search at `~/.config/book`.
 
@@ -40,7 +41,6 @@ you want as bookmarks, you can create subdirectories at any level and put an
 `index` file on each.
 
 An example structure could be like this:
-
 ```
 ~/.config/book/
 --------------------
