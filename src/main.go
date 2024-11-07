@@ -1,171 +1,78 @@
 package main
 
 import (
-	"bufio"
-	"log"
+	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
-
-	"github.com/pelletier/go-toml/v2"
 )
 
 var root string
-
-type Config struct {
-	FolderIcon string
-	Menu       string
-}
-
-var config = Config{
-	FolderIcon: "",
-	Menu:       "dmenu",
-}
-
 var startLocation string
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("At least 1 argument is required")
-	}
-	loadVariables()
-	loadConfig()
-	dir(os.Args[1])
-}
-
-func loadVariables() {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
-	}
 
 	configDir := os.Getenv("XDG_CONFIG_HOME")
+	var root string
 	if configDir == "" {
-		root = strings.Replace("~/.config/book/", "~", homeDir, 1)
+		root = fixString("~/.config/book/")
 	} else {
 		root = configDir + "/book/"
 	}
-	startLocation = root + os.Args[1]
 
-}
-
-func loadConfig() {
-	file, err := os.ReadFile(root + "config.toml")
-	if err != nil {
-		return
+	var config Config = Config{
+		Root:       root,
+		ConfigFile: root + "config.toml",
+		Run:        "xdg-open",
+		Menu:       "dmenu",
+		FolderIcon: "",
+		ShowUrl:    true,
 	}
-	err = toml.Unmarshal(file, &config)
-	if err != nil {
-		return
+
+	var folder Folder = Folder{
+		Name:     "index",
+		Indent:   0,
+		Children: make(map[string]*Folder),
 	}
-}
 
-func dir(dirname string) {
-	location := root + dirname
-	var directories []string
+	loadArguments(&config)
+	loadConfig(&config)
 
-	entries, err := os.ReadDir(location)
+	err := parseFile(&config, &folder)
+
 	if err != nil {
 		panic(err)
 	}
 
-	// Loop through the entries
-	for _, entry := range entries {
-		// Check if it's a directory
-		if entry.IsDir() {
-			directories = append(directories, location+"/"+entry.Name()) // Append full path
-		}
-	}
+	run(&folder, &config)
 
-	links, err := readLines(location + "/index")
-	if err != nil {
-		log.Fatal(err)
-	}
+}
 
-	var list []string
-	var dirs []string
-	var pipe string
-
-	if filepath.Clean(location) != startLocation {
-		directories = append([]string{".."}, directories...)
-	}
-
-	if len(directories) > 0 {
-		for _, d := range directories {
-			split := strings.Split(d, "/")
-			dirs = append(dirs, split[len(split)-1])
-			line := config.FolderIcon + " " + split[len(split)-1] + "\n"
-			pipe += line
-			list = append(list, line)
-		}
-	}
-
-	for _, l := range links {
-		pipe += l + "\n"
-		list = append(list, l+"\n")
-	}
-
-	out := showPrompt(pipe)
-	index := indexOf(list, out)
-
+func run(folder *Folder, config *Config) {
+	entries := stringifyFolder(*folder, *config)
+	selected := showPrompt(entries, config.Menu)
+	fmt.Println(selected)
+	index := indexOf(entries, selected)
 	if index == -1 {
 		return
-	} else if index < len(dirs) {
-		dir(dirname + "/" + dirs[index])
-	} else if index-len(dirs) < len(links) {
-		selected := links[index-len(dirs)]
-		link_split := strings.Split(selected, "#")
-		if len(link_split) == 1 {
-			cmd := exec.Command("xdg-open", selected)
-			err := cmd.Start()
-			if err != nil {
-				return
-			}
+	}
+	if folder.Parent != nil {
+		if ".." == strings.TrimPrefix(selected, config.FolderIcon+" ") {
+			run(folder.Parent, config)
 			return
-		}
-		cmd := exec.Command("xdg-open", strings.Trim(link_split[1], " "))
-		err := cmd.Start()
-		if err != nil {
-			return
+		} else {
+			index--
 		}
 	}
-
-}
-
-func showPrompt(pipe string) string {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		panic(err)
+	if index < len(folder.Children) {
+		selected = strings.TrimPrefix(selected, config.FolderIcon+" ")
+		run(folder.Children[selected], config)
+	} else if index-len(folder.Children) < len(folder.Index) {
+		bookmark := folder.Index[index-len(folder.Children)]
+		fmt.Println(index, bookmark.Name, bookmark.Url)
+		cmd := exec.Command("xdg-open", bookmark.Url)
+		cmd.Start()
 	}
-	menuCommand := strings.Replace(config.Menu, "~", homeDir, 1)
-	menu := strings.Fields(menuCommand)
-	cmd := exec.Command(menu[0], menu[1:]...)
-	cmd.Stdin = strings.NewReader(pipe)
-	output, err := cmd.Output()
-	if err != nil {
-		panic(err)
-	}
-	return string(output)
-}
-
-func readLines(path string) ([]string, error) {
-	file, err := os.Open(path)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-
-	return lines, scanner.Err()
 }
 
 func indexOf(arr []string, val string) int {
@@ -175,4 +82,45 @@ func indexOf(arr []string, val string) int {
 		}
 	}
 	return -1
+}
+
+func stringifyFolder(folder Folder, config Config) []string {
+	var entries []string
+
+	if folder.Parent != nil {
+		entries = append(entries, config.FolderIcon+" ..")
+	}
+
+	for k := range folder.Children {
+		entries = append(entries, config.FolderIcon+" "+k)
+	}
+
+	for _, b := range folder.Index {
+		var line string
+		if !config.ShowUrl || b.Name == "" {
+			line = b.Url
+		} else {
+			line = b.Name + " -> " + b.Url
+		}
+		entries = append(entries, line)
+	}
+
+	return entries
+}
+
+func showPrompt(entries []string, menuCommand string) string {
+	var entriesTxt string
+
+	for _, e := range entries {
+		entriesTxt += e + "\n"
+	}
+
+	menu := strings.Fields(menuCommand)
+	cmd := exec.Command(menu[0], menu[1:]...)
+	cmd.Stdin = strings.NewReader(entriesTxt)
+	output, err := cmd.Output()
+	if err != nil {
+		panic(err)
+	}
+	return strings.TrimSuffix(string(output), "\n")
 }
