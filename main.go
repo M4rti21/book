@@ -70,7 +70,9 @@ func run(folder *Folder, config *Config) {
 	} else if index-len(folder.Children) < len(folder.Index) {
 		bookmark := folder.Index[index-len(folder.Children)]
 		fmt.Println(index, bookmark.Name, bookmark.Url)
-		cmd := exec.Command("xdg-open", bookmark.Url)
+		run_split := strings.Fields(config.Run)
+		run_split = append(run_split, bookmark.Url)
+		cmd := exec.Command(run_split[0], run_split[1:]...)
 		cmd.Start()
 	}
 }
