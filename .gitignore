@@ -1,7 +1,2 @@
-*
-!.gitignore
-!src
-!src/*
-!PKGBUILD
-!LISCENSE
-!README.md
+book
+pkg
