@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/k0kubun/pp"
+	// "github.com/k0kubun/pp"
 )
 
 type Config struct {
@@ -22,6 +21,8 @@ type Bookmark struct {
 }
 
 type Folder struct {
+	parent  *Folder
+	indent  int
 	index   []Bookmark
 	folders map[string]*Folder
 }
@@ -44,6 +45,7 @@ var urls = Folder{}
 
 const FOLDER_DELIMITER = "*"
 const BOOKMARK_DELIMITER = "\""
+const INDENT_LEVEL = 4
 
 func main() {
 	file, err := os.Open("test.conf")
@@ -126,43 +128,83 @@ func parseVariable(key string, val string) {
 }
 
 func parseBookmarks(scanner bufio.Scanner) {
-	// prev_indent := 0
-	// prev_folder := urls
 	current_folder := &urls
+	current_folder.indent = 0 // Initialize the indent level for the root folder
 	current_folder.folders = make(map[string]*Folder)
+
 	for scanner.Scan() {
 		raw_line := scanner.Text()
-		// indent := indentLevel(raw_line)
+		indent := indentLevel(raw_line)
 		line := cleanLine(raw_line)
+
+		// Skip empty lines
+		if line == "" {
+			continue
+		}
+
+		// Debug output for current line and indent level
+		fmt.Printf("%d %s\n", indent, line)
+
 		if strings.HasPrefix(line, FOLDER_DELIMITER) {
+			// Handle folder creation
 			split := strings.Split(line, FOLDER_DELIMITER)
-			folder_name := strings.Trim(split[1], " ")
-			current_folder := &createFolder()
-		} else if strings.HasPrefix(line, BOOKMARK_DELIMITER) {
-			split := strings.Split(line, BOOKMARK_DELIMITER)
-			switch len(split) {
-			case 3:
-				current_folder.index = append(current_folder.index, Bookmark{
-					Name: "",
-					URL:  split[1],
-				})
-				break
-			case 5:
-				current_folder.index = append(current_folder.index, Bookmark{
-					Name: split[1],
-					URL:  split[3],
-				})
-				break
+			folder_name := strings.TrimSpace(split[1])
+			new_folder := createFolder()
+			new_folder.parent = current_folder // Set the parent of the new folder
+			new_folder.indent = indent         // Set the indent level for the new folder
+
+			if indent > current_folder.indent {
+				// If the new folder is indented more, it is a child of the current folder
+				fmt.Printf("Creating child folder: '%s' under '%s'\n", folder_name, current_folder.index)
+				current_folder.folders[folder_name] = new_folder
+				current_folder = new_folder // Move into the new folder
+			} else if indent == current_folder.indent {
+				// If at the same level, add it as a sibling in the parent folder
+				if current_folder.parent != nil {
+					fmt.Printf("Creating sibling folder: '%s' under parent '%s'\n", folder_name, current_folder.parent.index)
+					current_folder.parent.folders[folder_name] = new_folder
+				}
+			} else if indent < current_folder.indent {
+				// If indent level decreases, go back to the parent folder
+				fmt.Printf("Going back to parent folder from '%s'\n", current_folder.index)
+				for current_folder.parent != nil && indent < current_folder.indent {
+					current_folder = current_folder.parent
+				}
+				// Now add the new folder as a sibling if we're back at the parent level
+				if current_folder.parent != nil {
+					fmt.Printf("Creating sibling folder: '%s' under parent '%s'\n", folder_name, current_folder.parent.index)
+					current_folder.parent.folders[folder_name] = new_folder
+				}
+				current_folder = new_folder // Move into the new folder
+			}
+
+		} else {
+			// Handle bookmark parsing
+			if strings.HasPrefix(line, BOOKMARK_DELIMITER) {
+				split := strings.Split(line, BOOKMARK_DELIMITER)
+				switch len(split) {
+				case 3:
+					fmt.Printf("Adding bookmark with no name: '%s'\n", split[1])
+					current_folder.index = append(current_folder.index, Bookmark{
+						Name: "", // No name provided
+						URL:  strings.TrimSpace(split[1]),
+					})
+				case 5:
+					fmt.Printf("Adding bookmark: Name: '%s', URL: '%s'\n", split[1], split[3])
+					current_folder.index = append(current_folder.index, Bookmark{
+						Name: strings.TrimSpace(split[1]),
+						URL:  strings.TrimSpace(split[3]),
+					})
+				}
 			}
 		}
 	}
-	pp.Print(folders)
-	// pp.Print(current_folder)
+	// pp.Print(urls) // Print the populated URLs and folder structure
 }
 
-func createFolder() Folder {
+func createFolder() *Folder {
 	index := len(folders)
 	folders = append(folders, Folder{})
 	folders[index].folders = make(map[string]*Folder)
-	return folders[index]
+	return &folders[index]
 }

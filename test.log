@@ -1,0 +1,204 @@
+main.[32mFolder[0m{
+  [33mparent[0m: (*main.[32mFolder[0m)([36m[1mnil[0m),
+  [33mindent[0m: [34m[1m0[0m,
+  [33mindex[0m:  []main.[32mBookmark[0m{
+    main.[32mBookmark[0m{
+      [33mName[0m: [31m[1m"[0m[31mThis repo[0m[31m[1m"[0m,
+      [33mURL[0m:  [31m[1m"[0m[31mhttps://github.com/m4rti21/book[0m[31m[1m"[0m,
+    },
+    main.[32mBookmark[0m{
+      [33mName[0m: [31m[1m"[0m[31mThis repo[0m[31m[1m"[0m,
+      [33mURL[0m:  [31m[1m"[0m[31mhttps://git.m4rti.dev/book[0m[31m[1m"[0m,
+    },
+    main.[32mBookmark[0m{
+      [33mName[0m: [31m[1m"[0m[31mThis is a test[0m[31m[1m"[0m,
+      [33mURL[0m:  [31m[1m"[0m[31mhttps://m4rti.dev[0m[31m[1m"[0m,
+    },
+    main.[32mBookmark[0m{
+      [33mName[0m: [31m[1m"[0m[31mThis is another test[0m[31m[1m"[0m,
+      [33mURL[0m:  [31m[1m"[0m[31mhttps://wysi727.com[0m[31m[1m"[0m,
+    },
+    main.[32mBookmark[0m{
+      [33mName[0m: [31m[1m"[0m[31mgoogle[0m[31m[1m"[0m,
+      [33mURL[0m:  [31m[1m"[0m[31mhttps://google.com[0m[31m[1m"[0m,
+    },
+  },
+  [33mfolders[0m: map[string]*main.[32mFolder[0m{
+    [31m[1m"[0m[31mdebian[0m[31m[1m"[0m: &main.[32mFolder[0m{
+      [33mparent[0m: &main.[32mFolder[0m{
+        [33mparent[0m: &main.[32mFolder[0m{
+          [33mparent[0m:  (*main.[32mFolder[0m)([36m[1mnil[0m),
+          [33mindent[0m:  [34m[1m0[0m,
+          [33mindex[0m:   []main.[32mBookmark[0m{...},
+          [33mfolders[0m: map[string]*main.[32mFolder[0m{...},
+        },
+        [33mindent[0m: [34m[1m4[0m,
+        [33mindex[0m:  []main.[32mBookmark[0m{
+          main.[32mBookmark[0m{
+            [33mName[0m: [31m[1m"[0m[31mThis is a test[0m[31m[1m"[0m,
+            [33mURL[0m:  [31m[1m"[0m[31mhttps://archlinux.org[0m[31m[1m"[0m,
+          },
+          main.[32mBookmark[0m{
+            [33mName[0m: [31m[1m"[0m[31mThis is another test[0m[31m[1m"[0m,
+            [33mURL[0m:  [31m[1m"[0m[31mhttps://artixlinux.org[0m[31m[1m"[0m,
+          },
+        },
+        [33mfolders[0m: map[string]*main.[32mFolder[0m{},
+      },
+      [33mindent[0m: [34m[1m4[0m,
+      [33mindex[0m:  []main.[32mBookmark[0m{
+        main.[32mBookmark[0m{
+          [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+          [33mURL[0m:  [31m[1m"[0m[31mhttps://debian.org[0m[31m[1m"[0m,
+        },
+        main.[32mBookmark[0m{
+          [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+          [33mURL[0m:  [31m[1m"[0m[31mhttps://ubuntu.org[0m[31m[1m"[0m,
+        },
+        main.[32mBookmark[0m{
+          [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+          [33mURL[0m:  [31m[1m"[0m[31mhttps://linuxmint.com[0m[31m[1m"[0m,
+        },
+      },
+      [33mfolders[0m: map[string]*main.[32mFolder[0m{
+        [31m[1m"[0m[31mstuff2[0m[31m[1m"[0m: &main.[32mFolder[0m{
+          [33mparent[0m: &main.[32mFolder[0m{...},
+          [33mindent[0m: [34m[1m8[0m,
+          [33mindex[0m:  []main.[32mBookmark[0m{
+            main.[32mBookmark[0m{
+              [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+              [33mURL[0m:  [31m[1m"[0m[31mhttps://test1.com[0m[31m[1m"[0m,
+            },
+            main.[32mBookmark[0m{
+              [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+              [33mURL[0m:  [31m[1m"[0m[31mhttps://test2.org[0m[31m[1m"[0m,
+            },
+            main.[32mBookmark[0m{
+              [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+              [33mURL[0m:  [31m[1m"[0m[31mhttps://test3.org[0m[31m[1m"[0m,
+            },
+          },
+          [33mfolders[0m: map[string]*main.[32mFolder[0m{
+            [31m[1m"[0m[31mstuff3[0m[31m[1m"[0m: &main.[32mFolder[0m{
+              [33mparent[0m: &main.[32mFolder[0m{...},
+              [33mindent[0m: [34m[1m12[0m,
+              [33mindex[0m:  []main.[32mBookmark[0m{
+                main.[32mBookmark[0m{
+                  [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                  [33mURL[0m:  [31m[1m"[0m[31mhttps://test1.com[0m[31m[1m"[0m,
+                },
+                main.[32mBookmark[0m{
+                  [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                  [33mURL[0m:  [31m[1m"[0m[31mhttps://test2.org[0m[31m[1m"[0m,
+                },
+                main.[32mBookmark[0m{
+                  [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                  [33mURL[0m:  [31m[1m"[0m[31mhttps://test3.org[0m[31m[1m"[0m,
+                },
+              },
+              [33mfolders[0m: map[string]*main.[32mFolder[0m{
+                [31m[1m"[0m[31mstuff4[0m[31m[1m"[0m: &main.[32mFolder[0m{
+                  [33mparent[0m: &main.[32mFolder[0m{...},
+                  [33mindent[0m: [34m[1m16[0m,
+                  [33mindex[0m:  []main.[32mBookmark[0m{
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test1.com[0m[31m[1m"[0m,
+                    },
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test2.org[0m[31m[1m"[0m,
+                    },
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test3.org[0m[31m[1m"[0m,
+                    },
+                  },
+                  [33mfolders[0m: map[string]*main.[32mFolder[0m{},
+                },
+                [31m[1m"[0m[31mstuff5[0m[31m[1m"[0m: &main.[32mFolder[0m{
+                  [33mparent[0m: &main.[32mFolder[0m{...},
+                  [33mindent[0m: [34m[1m16[0m,
+                  [33mindex[0m:  []main.[32mBookmark[0m{
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test1.com[0m[31m[1m"[0m,
+                    },
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test2.org[0m[31m[1m"[0m,
+                    },
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test3.org[0m[31m[1m"[0m,
+                    },
+                  },
+                  [33mfolders[0m: map[string]*main.[32mFolder[0m{},
+                },
+              },
+            },
+            [31m[1m"[0m[31mstuff[0m[31m[1m"[0m: &main.[32mFolder[0m{
+              [33mparent[0m: &main.[32mFolder[0m{...},
+              [33mindent[0m: [34m[1m8[0m,
+              [33mindex[0m:  []main.[32mBookmark[0m{
+                main.[32mBookmark[0m{
+                  [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                  [33mURL[0m:  [31m[1m"[0m[31mhttps://test1.com[0m[31m[1m"[0m,
+                },
+                main.[32mBookmark[0m{
+                  [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                  [33mURL[0m:  [31m[1m"[0m[31mhttps://test2.org[0m[31m[1m"[0m,
+                },
+                main.[32mBookmark[0m{
+                  [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                  [33mURL[0m:  [31m[1m"[0m[31mhttps://test3.org[0m[31m[1m"[0m,
+                },
+              },
+              [33mfolders[0m: map[string]*main.[32mFolder[0m{
+                [31m[1m"[0m[31mmore and more stuff[0m[31m[1m"[0m: &main.[32mFolder[0m{
+                  [33mparent[0m: &main.[32mFolder[0m{...},
+                  [33mindent[0m: [34m[1m12[0m,
+                  [33mindex[0m:  []main.[32mBookmark[0m{
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test1.com[0m[31m[1m"[0m,
+                    },
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test2.org[0m[31m[1m"[0m,
+                    },
+                    main.[32mBookmark[0m{
+                      [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+                      [33mURL[0m:  [31m[1m"[0m[31mhttps://test3.org[0m[31m[1m"[0m,
+                    },
+                  },
+                  [33mfolders[0m: map[string]*main.[32mFolder[0m{},
+                },
+              },
+            },
+          },
+        },
+        [31m[1m"[0m[31mfedora[0m[31m[1m"[0m: &main.[32mFolder[0m{
+          [33mparent[0m: &main.[32mFolder[0m{...},
+          [33mindent[0m: [34m[1m4[0m,
+          [33mindex[0m:  []main.[32mBookmark[0m{
+            main.[32mBookmark[0m{
+              [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+              [33mURL[0m:  [31m[1m"[0m[31mhttps://debian.org[0m[31m[1m"[0m,
+            },
+            main.[32mBookmark[0m{
+              [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+              [33mURL[0m:  [31m[1m"[0m[31mhttps://ubuntu.org[0m[31m[1m"[0m,
+            },
+            main.[32mBookmark[0m{
+              [33mName[0m: [31m[1m"[0m[31m[1m"[0m,
+              [33mURL[0m:  [31m[1m"[0m[31mhttps://linuxmint.com[0m[31m[1m"[0m,
+            },
+          },
+          [33mfolders[0m: map[string]*main.[32mFolder[0m{},
+        },
+      },
+    },
+    [31m[1m"[0m[31march[0m[31m[1m"[0m: &main.[32mFolder[0m{...},
+  },
+}
