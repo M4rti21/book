@@ -40,11 +40,10 @@ type Arguments struct {
 var arguments = Arguments{}
 
 func main() {
-	loadArguments()
-	fmt.Println("Arguments:", arguments)
-	loadConfig()
-	fmt.Println("Config:", config)
-	dir(arguments.Bookmarks)
+	if len(os.Args) < 2 {
+		log.Fatal("At least 1 argument is required")
+	}
+	loadVariables()
 }
 
 func loadArguments() {
