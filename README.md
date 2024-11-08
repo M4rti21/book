@@ -11,8 +11,6 @@ https://github.com/user-attachments/assets/150bcd63-2e35-4703-8e04-ea6dda61cbe9
 - [Configuration](#configuration)
   * [Settings](#settings)
   * [Bookmarks](#bookmarks)
-    + [Without description](#without-description)
-    + [With description](#with-description)
 - [Usage](#usage)
 
 ## Instalation
@@ -30,13 +28,12 @@ cd ..
 ```
 
 ## Configuration
-The config directory its gonna be at `$XDG_CONFIG_HOME/book`, if the variable
-is not set then it'll search at `~/.config/book`.
+The default config directory is `$XDG_CONFIG_HOME/book`, if the variable
+is not set then it will fallback to `~/.config/book`.
 
 ### Settings
-The program will look for a file called `config.toml` in the config folder.
-The values are:
-
+The program will look for a file called `config.toml` in the config directory.
+The allowed options are:
 | name          | type      | default       | flag | description  |
 |---------------|-----------|---------------|------|--------------|
 | folderIcon    | string    | `""`           | -f   | icon used for folders |
@@ -46,13 +43,14 @@ The values are:
 
 ##### Example: 
 ```toml
+# config.toml
 menu = "tofi"
 showUrl = false
 ```
 
 > [!NOTE]
-> This ones only exist in the form of flags, they will be ignored if present
-> in the config file
+> The next options only exist as flags, they will be ignored if present in the
+> config file
 
 | name          | type      | default                               | flag  | description |
 |---------------|-----------|---------------------------------------|-------|-------------|
@@ -61,8 +59,8 @@ showUrl = false
 
 ### Bookmarks
 Inside the config directory create file called `<collection-name>.conf` where your
-bookmarks will be stored, for example `personal.conf`. The file is divided in two
-sections: `[config]` and `[bookmarks]`.
+bookmarks will be stored, for example `personal.conf`. You can have as many 
+collections as you want. The file is divided in two sections: `[config]` and `[bookmarks]`.
 
 > [!IMPORTANT]
 > Indentation in this file has to be 4 spaces and needs cannot be ommited
@@ -72,8 +70,8 @@ sections: `[config]` and `[bookmarks]`.
 > comment and therefore it will be ignored
 
 The `[config]` section can be used to override the global settings defined at the 
-`config.toml` file (for example there is a set of bookmarks you might want to show
-on a different menu or launch them with a different browser).
+`config.toml` file (for example, there might be a collection of bookmarks you might 
+want to show on a different menu or launch them with a different browser).
 
 ##### Example: 
 ```conf
@@ -112,6 +110,11 @@ You can also define sub-folders, to define one the line must start with the star
 ##### Example: 
 ```conf
 # personal.conf
+[config]
+    menu = "tofi"
+    run = "xdg-open"
+    showUrl = true
+
 [bookmarks]
     "Example"                   "https://example.com"   # This is a comment
     "Another Example"           "https://someotherurl.com/i/dont/know"
@@ -136,7 +139,7 @@ You can also define sub-folders, to define one the line must start with the star
 
 ## Usage
 Once configured its as simple as running `book <collection-name>` where 
-`<collection-name>` is the name of one of the files in your config directory, 
+`<collection-name>` is the name of one of the collections in your config directory, 
 for example `book personal` will open `personal.conf`. You can pass flags to
 the program after the `<collection-name>` is specified:
 
