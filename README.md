@@ -54,7 +54,7 @@ showUrl = false
 > This ones only exist in the form of flags, they will be ignored if present
 > in the config file
 
-| name          | type      | default                               | flag -| description |
+| name          | type      | default                               | flag  | description |
 |---------------|-----------|---------------------------------------|-------|-------------|
 | config        | string    | "$XDG_CONFIG_HOME"/book/config.conf   | -c    | location of the base config file |
 | directory     | string    | "$XDG_CONFIG_HOME"/book               | -d    | location of the directory where <collection-name>.conf will be searched for |
