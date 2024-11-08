@@ -56,8 +56,8 @@ showUrl = false
 
 | name          | type      | default                               | flag  | description |
 |---------------|-----------|---------------------------------------|-------|-------------|
-| config        | string    | "$XDG_CONFIG_HOME"/book/config.conf   | -c    | location of the base config file |
-| directory     | string    | "$XDG_CONFIG_HOME"/book               | -d    | location of the directory where <collection-name>.conf will be searched for |
+| config        | string    | `"$XDG_CONFIG_HOME"/book/config.conf` | -c    | location of the base config file |
+| directory     | string    | `"$XDG_CONFIG_HOME"/book`             | -d    | location of the directory where <collection-name>.conf will be searched for |
 
 ### Bookmarks
 Inside the config directory create file called `<collection-name>.conf` where your
