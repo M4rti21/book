@@ -63,7 +63,7 @@ bookmarks will be stored, for example `personal.conf`. You can have as many
 collections as you want. The file is divided in two sections: `[config]` and `[bookmarks]`.
 
 > [!IMPORTANT]
-> Indentation in this file has to be 4 spaces and needs cannot be ommited
+> Indentation in this file has to be 4 spaces and cannot be ommited
 
 > [!TIP]
 > Anything at the ritght side of the hashtag `#` symbol will be interpreted as a 
