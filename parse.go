@@ -50,7 +50,7 @@ func parseFile(config *Config, folder *Folder) error {
 }
 
 func cleanLine(line string) string {
-	return strings.Trim(strings.Split(line, "#")[0], " ")
+	return strings.Trim(line, " ")
 }
 
 func indentLevel(s string) int {
