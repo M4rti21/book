@@ -1,25 +1,28 @@
 # Maintainer: Martí Comas <m4rti21@proton.me>
-pkgname='book'
-pkgver=0.2.4
+pkgname='book-git'
+pkgver=r56.4ff1893
 pkgrel=1
-pkgdesc="A simple bookmark manager written in go"
+pkgdesc='A simple bookmark manager written in go'
 arch=('x86_64')
-url="https://github.com/M4rti21/$pkgname"
+url="https://github.com/M4rti21/book"
 license=('GPL')
-groups=()
-depends=()
-makedepends=('go')
-optdepends=()
-source=("$pkgname.tar.gz::https://github.com/M4rti21/$pkgname/archive/refs/tags/$pkgver.tar.gz")
-sha256sums=('SKIP')
+makedepends=('git' 'go')
+source=("${pkgname}::git+http://github.com/M4rti21/book.git")
+md5sums=('SKIP')
 options=('!debug')
 
+pkgver() {
+    cd "$srcdir/$pkgname"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
+
 build() {
-    cd "$pkgname-$pkgver/src"
-    go build -o ..
+    cd "$srcdir/$pkgname"
+    go build
 }
 
 package() {
-    cd "$pkgname-$pkgver"
-    install -Dm755 "./$pkgname" "$pkgdir/usr/bin/$pkgname"
+    cd "$srcdir/$pkgname"
+    install -Dm755 "./book" "$pkgdir/usr/bin/book"
+    install -Dm644 "./README.md" "$pkgdir/usr/share/doc/book"
 }
