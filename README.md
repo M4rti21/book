@@ -76,18 +76,14 @@ bookmarks will be stored, for example `personal.conf`. You can have as many
 collections as you want. The file is divided in two sections: `[config]` and `[bookmarks]`.
 
 > [!IMPORTANT]
-> Indentation in this file SHOULD be 4 spaces, somehow it seems to work with
+> Indentation in this file **SHOULD** be 4 spaces, somehow it seems to work with
 > other amounts of spaces but it is not guaranteed to work.
-
-> [!TIP]
-> Anything at the ritght side of the hashtag `#` symbol will be interpreted as a 
-> comment and therefore it will be ignored
 
 The `[config]` section can be used to override the global settings defined at the 
 `config.toml` file (for example, there might be a collection of bookmarks you might 
 want to show on a different menu or launch them with a different browser).
 
-> [!IMPORTANT]
+> [!NOTE] 
 > The `showUrl` option is not available in the `[config]` section of the `.conf` 
 > files, it can only be set in the `config.toml` file or as a flag.
 
