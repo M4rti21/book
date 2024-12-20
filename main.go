@@ -26,7 +26,7 @@ func main() {
 		Run:        "xdg-open",
 		Menu:       "dmenu",
 		FolderIcon: "",
-		ShowUrl:    true,
+		ShowUrl:    false,
 	}
 
 	var folder Folder = Folder{
@@ -35,8 +35,8 @@ func main() {
 		Children: make(map[string]*Folder),
 	}
 
-	loadArguments(&config)
 	loadConfig(&config)
+	loadArguments(&config)
 
 	err := parseFile(&config, &folder)
 
@@ -45,7 +45,6 @@ func main() {
 	}
 
 	run(&folder, &config)
-
 }
 
 func run(folder *Folder, config *Config) {
@@ -99,10 +98,12 @@ func stringifyFolder(folder Folder, config Config) []string {
 
 	for _, b := range folder.Index {
 		var line string
-		if !config.ShowUrl || b.Name == "" {
+		if b.Name == "" {
 			line = b.Url
-		} else {
+		} else if config.ShowUrl {
 			line = b.Name + " -> " + b.Url
+		} else {
+			line = b.Name
 		}
 		entries = append(entries, line)
 	}

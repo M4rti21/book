@@ -39,9 +39,6 @@ func parseFile(config *Config, folder *Folder) error {
 	if override_config.Menu != "" {
 		config.Menu = override_config.Menu
 	}
-	// if override_config.ShowUrl != "" {
-	// 	config.Menu = override_config.ShowUrl
-	// }
 
 	if err := scanner.Err(); err != nil {
 		return err

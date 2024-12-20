@@ -13,6 +13,7 @@ func loadArguments(config *Config) {
 	flag.StringVar(&args_config.ConfigFile, "c", "", "Specify a base config file")
 	flag.StringVar(&args_config.FolderIcon, "f", "", "Specify folder icon")
 	flag.StringVar(&args_config.Menu, "m", "", "Specify menu command")
+	flag.BoolVar(&args_config.ShowUrl, "u", false, "Show URL in menu")
 	flag.StringVar(&args_config.Run, "r", "", "Specify run command")
 
 	flag.Parse()
@@ -33,6 +34,13 @@ func loadArguments(config *Config) {
 	if args_config.Run != "" {
 		config.Run = fixString(args_config.Run)
 	}
+	if args_config.FolderIcon != "" {
+		config.FolderIcon = fixString(args_config.FolderIcon)
+	}
+	if args_config.ShowUrl {
+		config.ShowUrl = true
+	}
+
 	config.Bookmarks = flag.Args()[0]
 }
 
@@ -53,5 +61,11 @@ func loadConfig(config *Config) {
 	}
 	if base_config.Run != "" {
 		config.Run = fixString(base_config.Run)
+	}
+	if base_config.FolderIcon != "" {
+		config.FolderIcon = fixString(base_config.FolderIcon)
+	}
+	if base_config.ShowUrl {
+		config.ShowUrl = true
 	}
 }
