@@ -97,6 +97,9 @@ func parseVariable(config *Config, key string, val string) {
 	case "showUrl":
 		config.ShowUrl = val == "true"
 		break
+	case "showAll":
+		config.ShowAll = val == "true"
+		break
 	}
 }
 

@@ -9,12 +9,14 @@ import (
 
 func loadArguments(config *Config) {
 	var args_config Config
-	flag.StringVar(&args_config.Root, "d", "", "Specify bookmark file {/path/to/directory/} where <bookmark-name>.conf is at")
 	flag.StringVar(&args_config.ConfigFile, "c", "", "Specify a base config file")
+
+	flag.StringVar(&args_config.Root, "d", "", "Specify bookmark file {/path/to/directory/} where <bookmark-name>.conf is at")
 	flag.StringVar(&args_config.FolderIcon, "f", "", "Specify folder icon")
 	flag.StringVar(&args_config.Menu, "m", "", "Specify menu command")
-	flag.BoolVar(&args_config.ShowUrl, "u", false, "Show URL in menu")
 	flag.StringVar(&args_config.Run, "r", "", "Specify run command")
+	flag.BoolVar(&args_config.ShowUrl, "u", false, "Show URL in menu")
+	flag.BoolVar(&args_config.ShowAll, "a", false, "Show All urls")
 
 	flag.Parse()
 
@@ -39,6 +41,9 @@ func loadArguments(config *Config) {
 	}
 	if args_config.ShowUrl {
 		config.ShowUrl = true
+	}
+	if args_config.ShowAll {
+		config.ShowAll = true
 	}
 
 	config.Bookmarks = flag.Args()[0]
@@ -67,5 +72,8 @@ func loadConfig(config *Config) {
 	}
 	if base_config.ShowUrl {
 		config.ShowUrl = true
+	}
+	if base_config.ShowAll {
+		config.ShowAll = true
 	}
 }

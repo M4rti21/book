@@ -8,6 +8,7 @@ type Config struct {
 	Run        string
 	FolderIcon string
 	ShowUrl    bool
+	ShowAll    bool
 }
 
 type Bookmark struct {
@@ -21,4 +22,11 @@ type Folder struct {
 	Indent   int
 	Index    []Bookmark
 	Children map[string]*Folder
+}
+
+type Entry struct {
+	Name     string
+	bookmark *Bookmark
+	folder   *Folder
+	isFolder bool
 }

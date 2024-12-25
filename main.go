@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"os"
 	"os/exec"
 	"strings"
@@ -27,6 +27,7 @@ func main() {
 		Menu:       "dmenu",
 		FolderIcon: "",
 		ShowUrl:    false,
+		ShowAll:    false,
 	}
 
 	var folder Folder = Folder{
@@ -48,74 +49,85 @@ func main() {
 }
 
 func run(folder *Folder, config *Config) {
-	entries := stringifyFolder(*folder, *config)
-	selected := showPrompt(entries, config.Menu)
-	fmt.Println(selected)
-	index := indexOf(entries, selected)
-	if index == -1 {
-		return
+	entries := generateEntries([]Entry{}, folder, "", *config)
+	selected, err := showPrompt(entries, config.Menu)
+	if err != nil {
+		panic(err)
 	}
-	if folder.Parent != nil {
-		if ".." == strings.TrimPrefix(selected, config.FolderIcon+" ") {
-			run(folder.Parent, config)
-			return
-		} else {
-			index--
-		}
-	}
-	if index < len(folder.Children) {
-		selected = strings.TrimPrefix(selected, config.FolderIcon+" ")
-		run(folder.Children[selected], config)
-	} else if index-len(folder.Children) < len(folder.Index) {
-		bookmark := folder.Index[index-len(folder.Children)]
-		fmt.Println(index, bookmark.Name, bookmark.Url)
+
+	if selected.isFolder {
+		run(selected.folder, config)
+	} else {
 		run_split := strings.Fields(config.Run)
-		run_split = append(run_split, bookmark.Url)
+		run_split = append(run_split, selected.bookmark.Url)
 		cmd := exec.Command(run_split[0], run_split[1:]...)
 		cmd.Start()
 	}
 }
 
-func indexOf(arr []string, val string) int {
+func indexOf(arr []Entry, val string) int {
 	for pos, v := range arr {
-		if v == val {
+		if v.Name == val {
 			return pos
 		}
 	}
 	return -1
 }
 
-func stringifyFolder(folder Folder, config Config) []string {
-	var entries []string
+func generateEntries(entries []Entry, folder *Folder, basename string, config Config) []Entry {
 
-	if folder.Parent != nil {
-		entries = append(entries, config.FolderIcon+" ..")
+	createBookmarkEntry := func(b Bookmark) Entry {
+		var name string
+		if b.Name == "" {
+			name = b.Url
+		} else if config.ShowUrl {
+			name = b.Name + " -> " + b.Url
+		} else {
+			name = b.Name
+		}
+		return Entry{
+			Name:     basename + name,
+			isFolder: false,
+			bookmark: &b,
+		}
 	}
 
-	for k := range folder.Children {
-		entries = append(entries, config.FolderIcon+" "+k)
+	if !config.ShowAll && folder.Parent != nil {
+		entries = append(entries, Entry{
+			Name:     config.FolderIcon + " ..",
+			isFolder: true,
+			folder:   folder.Parent,
+		})
+	}
+
+	if !config.ShowAll {
+		for k, v := range folder.Children {
+			entries = append(entries, Entry{
+				Name:     config.FolderIcon + " " + k,
+				isFolder: true,
+				folder:   v,
+			})
+		}
 	}
 
 	for _, b := range folder.Index {
-		var line string
-		if b.Name == "" {
-			line = b.Url
-		} else if config.ShowUrl {
-			line = b.Name + " -> " + b.Url
-		} else {
-			line = b.Name
+		entries = append(entries, createBookmarkEntry(b))
+	}
+
+	if config.ShowAll {
+		for _, f := range folder.Children {
+			entries = generateEntries(entries, f, basename+f.Name+"/", config)
 		}
-		entries = append(entries, line)
 	}
 
 	return entries
 }
 
-func showPrompt(entries []string, menuCommand string) string {
+func showPrompt(entries []Entry, menuCommand string) (Entry, error) {
 	var entriesTxt string
 
 	for _, e := range entries {
-		entriesTxt += e + "\n"
+		entriesTxt += e.Name + "\n"
 	}
 
 	menu := strings.Fields(menuCommand)
@@ -123,7 +135,14 @@ func showPrompt(entries []string, menuCommand string) string {
 	cmd.Stdin = strings.NewReader(entriesTxt)
 	output, err := cmd.Output()
 	if err != nil {
-		panic(err)
+		return Entry{}, errors.New("something went wrong")
 	}
-	return strings.TrimSuffix(string(output), "\n")
+
+	res := strings.TrimSuffix(string(output), "\n")
+	index := indexOf(entries, res)
+	if index == -1 {
+		return Entry{}, errors.New("no entry selected")
+	}
+
+	return entries[index], nil
 }

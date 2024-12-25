@@ -51,6 +51,7 @@ The allowed options are:
 | menu          | string    | `"dmenu"`     | -m   | program for displaying the options (has to accept stdin for the entires) |
 | run           | string    | `"xdg-open"`  | -r   | program for opening the selected url                                     |
 | showUrl       | boolean   | `true`        | -u   | weather to show the url if a name is provided                            |
+| showAll       | boolean   | `true`        | -a   | weather to show all urls at once                                         |
 
 ##### Example: 
 
