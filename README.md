@@ -1,3 +1,4 @@
+# Moved to [codeberg](https://codeberg.org/Marti/book)
 # 📚 book
 
 Simple bookmark manager written in go
